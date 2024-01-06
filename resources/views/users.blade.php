@@ -13,6 +13,11 @@
     <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
+    <style>
+        .input-valid {
+            border-color: green !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -27,11 +32,13 @@
                         <input id="name" type="text" class="form-control" name="name" placeholder="Name"
                             required autofocus>
                     </div>
+                    <div class="invalid-feedback" id="nameError"></div>
                     <div class="form-group mx-sm-3 mb-2">
                         <label for="email" class="sr-only">Email</label>
                         <input id="email" type="email" class="form-control" name="email" placeholder="Email"
                             required autofocus>
                     </div>
+                    <div class="invalid-feedback" id="emailError"></div>
                     <div class="form-group mx-sm-3 mb-2">
                         <label for="email" class="sr-only">Phone</label>
                         <input id="phone" type="number" class="form-control" name="phone" placeholder="Phone"
@@ -135,15 +142,16 @@
                     var phone = value.phone || '';
 
                     htmls.push('<tr>\
-                            <td>' + value.name + '</td>\
-                            <td>' + value.email + '</td>\
-                            <td>' + phone + '</td>\
-                            <td><button data-toggle="modal" data-target="#update-modal" class="btn btn-info updateData" data-id="' +
+                                                <td>' + value.name + '</td>\
+                                                <td>' + value.email + '</td>\
+                                                <td>' + phone +
+                        '</td>\
+                                                <td><button data-toggle="modal" data-target="#update-modal" class="btn btn-info updateData" data-id="' +
                         index +
                         '">Update</button>\
-                            <button data-toggle="modal" data-target="#remove-modal" class="btn btn-danger removeData" data-id="' +
+                                                <button data-toggle="modal" data-target="#remove-modal" class="btn btn-danger removeData" data-id="' +
                         index + '">Delete</button></td>\
-                        </tr>');
+                                            </tr>');
                 }
                 lastIndex = index;
             });
@@ -153,53 +161,82 @@
 
         // Add Data
         $('#submitUser').on('click', function() {
-    // Validate form fields
-    var name = $("#name").val();
-    var email = $("#email").val();
-    var phone = $("#phone").val();
+            // Clear previous error messages
+            $('.invalid-feedback').text('');
+            $('.form-control').removeClass('is-invalid');
+            // Validate form fields
+            var name = $("#name").val();
+            var email = $("#email").val();
+            var phone = $("#phone").val();
+            var isValid = true;
 
-    if (name.trim() === '' || email.trim() === '' || phone.trim() === '') {
-        alert('Please fill out all fields.');
-        return;
-    }
+            if (name.trim() === '') {
+                $('#name').addClass('is-invalid');
+                isValid = false;
+            }
+            if (email.trim() === '') {
+                $('#email').addClass('is-invalid');
+                isValid = false;
+            }
+            if (phone.trim() === '') {
+                $('#phone').addClass('is-invalid');
+                isValid = false;
+            }
 
-    // Rest of your existing code for submitting to Firebase
-    var values = $("#addUser").serializeArray();
-    var userID = lastIndex + 1;
+            if (!isValid) {
+                // If any field is not valid, display a general error message
+                $('#errorMessages').text('Please fix the errors in the form.');
+                return;
+            }
+            // Rest of your existing code for submitting to Firebase
+            var values = $("#addUser").serializeArray();
+            var userID = lastIndex + 1;
 
-    console.log(values);
+            console.log(values);
 
-    firebase.database().ref('Users/' + userID).set({
-        name: name,
-        email: email,
-        phone: phone,
-    });
+            firebase.database().ref('Users/' + userID).set({
+                name: name,
+                email: email,
+                phone: phone,
+            });
 
-    // Reassign lastID value
-    lastIndex = userID;
-    $("#addUser input").val("");
-});
-
+            // Reassign lastID value
+            lastIndex = userID;
+            $("#addUser input").val("");
+        });
+        // Keypress event handler for changing input field color
+        $('.form-control').on('input', function() {
+            if ($(this).val().trim() !== '') {
+                $(this).removeClass('is-invalid');
+                $(this).addClass('input-valid');
+            } else {
+                $(this).removeClass('input-valid');
+            }
+        });
         // Update Data
         var updateID = 0;
         $('body').on('click', '.updateData', function() {
             updateID = $(this).attr('data-id');
             firebase.database().ref('Users/' + updateID).on('value', function(snapshot) {
                 var values = snapshot.val();
-                var updateData = '<div class="form-group">\
-                            <label for="first_name" class="col-md-12 col-form-label">Name</label>\
-                            <div class="col-md-12">\
-                                <input id="first_name" type="text" class="form-control" name="name" value="' + values
-                    .name + '" required autofocus>\
-                            </div>\
-                        </div>\
-                        <div class="form-group">\
-                            <label for="last_name" class="col-md-12 col-form-label">Email</label>\
-                            <div class="col-md-12">\
-                                <input id="last_name" type="text" class="form-control" name="email" value="' + values
+                var updateData =
+                    '<div class="form-group">\
+                                                <label for="first_name" class="col-md-12 col-form-label">Name</label>\
+                                                <div class="col-md-12">\
+                                                    <input id="first_name" type="text" class="form-control" name="name" value="' +
+                    values
+                    .name +
+                    '" required autofocus>\
+                                                </div>\
+                                            </div>\
+                                            <div class="form-group">\
+                                                <label for="last_name" class="col-md-12 col-form-label">Email</label>\
+                                                <div class="col-md-12">\
+                                                    <input id="last_name" type="text" class="form-control" name="email" value="' +
+                    values
                     .email + '" required autofocus>\
-                            </div>\
-                        </div>';
+                                                </div>\
+                                            </div>';
 
                 $('#updateBody').html(updateData);
             });

@@ -62,6 +62,28 @@
         </table>
     </div>
 
+    <!-- SHow Model -->
+    <form action="" method="POST" class="users-update-record-model form-horizontal">
+        <div id="show-modal" data-backdrop="static" data-keyboard="false" class="modal fade" tabindex="-1"
+            role="dialog" aria-labelledby="custom-width-modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" style="width:55%;">
+                <div class="modal-content" style="overflow: hidden;">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="custom-width-modalLabel">Show</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                        </button>
+                    </div>
+                    <div class="modal-body" id="showBody">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
     <!-- Update Model -->
     <form action="" method="POST" class="users-update-record-model form-horizontal">
         <div id="update-modal" data-backdrop="static" data-keyboard="false" class="modal fade" tabindex="-1"
@@ -142,14 +164,15 @@
                     var phone = value.phone || '';
 
                     htmls.push('<tr>\
-                                                <td>' + value.name + '</td>\
-                                                <td>' + value.email + '</td>\
-                                                <td>' + phone +
+                         <td>' + value.name + '</td>\
+                        <td>' + value.email + '</td>\
+                         <td>' + phone +
                         '</td>\
-                                                <td><button data-toggle="modal" data-target="#update-modal" class="btn btn-info updateData" data-id="' +
-                        index +
-                        '">Update</button>\
-                                                <button data-toggle="modal" data-target="#remove-modal" class="btn btn-danger removeData" data-id="' +
+                        <td><button data-toggle="modal" data-target="#show-modal" class="btn btn-info showData" data-id="' +
+                        index + '">Show</button>\
+                        <button data-toggle="modal" data-target="#update-modal" class="btn btn-info updateData" data-id="' +
+                        index + '">Update</button>\
+                         <button data-toggle="modal" data-target="#remove-modal" class="btn btn-danger removeData" data-id="' +
                         index + '">Delete</button></td>\
                                             </tr>');
                 }
@@ -212,6 +235,38 @@
             } else {
                 $(this).removeClass('input-valid');
             }
+        });
+        // Show Data
+        var showID = 0;
+        $('body').on('click', '.showData', function() {
+            showID = $(this).attr('data-id');
+            firebase.database().ref('Users/' + showID).on('value', function(snapshot) {
+                var values = snapshot.val();
+                var updateData =
+    '<table class="table">\
+        <tr>\
+            <td>\
+                <label class="col-form-label">Name:</label>\
+                <span id="firstNameValue">' + values.name + '</span>\
+            </td>\
+        </tr>\
+        <tr>\
+            <td>\
+                <label class="col-form-label">Email:</label>\
+                <span id="emailValue">' + values.email + '</span>\
+            </td>\
+        </tr>\
+        <tr>\
+            <td>\
+                <label class="col-form-label">Phone:</label>\
+                <span id="phoneValue">' + values.phone + '</span>\
+            </td>\
+        </tr>\
+    </table>';
+
+
+                $('#showBody').html(updateData);
+            });
         });
         // Update Data
         var updateID = 0;

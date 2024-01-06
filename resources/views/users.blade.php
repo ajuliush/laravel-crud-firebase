@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Laravel 10 CRUD Operation using Google Firebase - Techsolutionstuff</title>
+    <title>Laravel 10 CRUD Operation using Google Firebase</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
@@ -22,7 +22,7 @@
 
 <body>
     <div class="container" style="margin-top: 50px;">
-        <h4 class="text-center">Laravel 10 CRUD Operation using Google Firebase - Techsolutionstuff</h4><br>
+        <h4 class="text-center">Laravel 10 CRUD Operation using Google Firebase</h4><br>
         <h5># Add User</h5>
         <div class="card card-default">
             <div class="card-body">
@@ -44,6 +44,7 @@
                         <input id="phone" type="number" class="form-control" name="phone" placeholder="Phone"
                             required autofocus>
                     </div>
+                    <div class="invalid-feedback" id="phoneError"></div>
                     <button id="submitUser" type="button" class="btn btn-primary mb-2">Submit</button>
                 </form>
             </div>
@@ -164,17 +165,19 @@
                     var phone = value.phone || '';
 
                     htmls.push('<tr>\
-                         <td>' + value.name + '</td>\
-                        <td>' + value.email + '</td>\
-                         <td>' + phone +
+                             <td>' + value.name + '</td>\
+                            <td>' + value.email + '</td>\
+                             <td>' + phone +
                         '</td>\
-                        <td><button data-toggle="modal" data-target="#show-modal" class="btn btn-info showData" data-id="' +
-                        index + '">Show</button>\
-                        <button data-toggle="modal" data-target="#update-modal" class="btn btn-info updateData" data-id="' +
-                        index + '">Update</button>\
-                         <button data-toggle="modal" data-target="#remove-modal" class="btn btn-danger removeData" data-id="' +
+                            <td><button data-toggle="modal" data-target="#show-modal" class="btn btn-info showData" data-id="' +
+                        index +
+                        '">Show</button>\
+                            <button data-toggle="modal" data-target="#update-modal" class="btn btn-info updateData" data-id="' +
+                        index +
+                        '">Update</button>\
+                             <button data-toggle="modal" data-target="#remove-modal" class="btn btn-danger removeData" data-id="' +
                         index + '">Delete</button></td>\
-                                            </tr>');
+                                                </tr>');
                 }
                 lastIndex = index;
             });
@@ -242,30 +245,30 @@
             showID = $(this).attr('data-id');
             firebase.database().ref('Users/' + showID).on('value', function(snapshot) {
                 var values = snapshot.val();
-                var updateData =
-    '<table class="table">\
-        <tr>\
-            <td>\
-                <label class="col-form-label">Name:</label>\
-                <span id="firstNameValue">' + values.name + '</span>\
-            </td>\
-        </tr>\
-        <tr>\
-            <td>\
-                <label class="col-form-label">Email:</label>\
-                <span id="emailValue">' + values.email + '</span>\
-            </td>\
-        </tr>\
-        <tr>\
-            <td>\
-                <label class="col-form-label">Phone:</label>\
-                <span id="phoneValue">' + values.phone + '</span>\
-            </td>\
-        </tr>\
-    </table>';
+                var showData =
+                    '<table class="table">\
+            <tr>\
+                <td>\
+                    <label class="col-form-label">Name:</label>\
+                    <span id="firstNameValue">' + values.name + '</span>\
+                </td>\
+            </tr>\
+            <tr>\
+                <td>\
+                    <label class="col-form-label">Email:</label>\
+                    <span id="emailValue">' + values.email + '</span>\
+                </td>\
+            </tr>\
+            <tr>\
+                <td>\
+                    <label class="col-form-label">Phone:</label>\
+                    <span id="phoneValue">' + values.phone + '</span>\
+                </td>\
+            </tr>\
+        </table>';
 
 
-                $('#showBody').html(updateData);
+                $('#showBody').html(showData);
             });
         });
         // Update Data
@@ -276,32 +279,75 @@
                 var values = snapshot.val();
                 var updateData =
                     '<div class="form-group">\
-                                                <label for="first_name" class="col-md-12 col-form-label">Name</label>\
-                                                <div class="col-md-12">\
-                                                    <input id="first_name" type="text" class="form-control" name="name" value="' +
+                                                    <label for="first_name" class="col-md-12 col-form-label">Name</label>\
+                                                    <div class="col-md-12">\
+                                                        <input id="update-name" type="text" class="form-control" name="name" value="' +
                     values
                     .name +
                     '" required autofocus>\
+                                                    </div>\
                                                 </div>\
-                                            </div>\
-                                            <div class="form-group">\
-                                                <label for="last_name" class="col-md-12 col-form-label">Email</label>\
-                                                <div class="col-md-12">\
-                                                    <input id="last_name" type="text" class="form-control" name="email" value="' +
+                                                <div class="form-group">\
+                                                    <label for="last_name" class="col-md-12 col-form-label">Email</label>\
+                                                    <div class="col-md-12">\
+                                                        <input id="update-email" type="text" class="form-control" name="email" value="' +
                     values
-                    .email + '" required autofocus>\
+                    .email +
+                    '" required autofocus>\
+                                                    </div>\
                                                 </div>\
-                                            </div>';
+                                                <div class="form-group">\
+                                                    <label for="last_name" class="col-md-12 col-form-label">Phone</label>\
+                                                    <div class="col-md-12">\
+                                                        <input id="update-phone" type="number" class="form-control" name="phone" value="' +
+                    values
+                    .phone + '" required autofocus>\
+                                                    </div>\
+                                                </div>';
 
                 $('#updateBody').html(updateData);
             });
         });
 
-        $('.updateUser').on('click', function() {
+        $('.updateUser').on('click', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Clear previous error messages
+            $('.invalid-feedback').text('');
+            $('.form-control').removeClass('is-invalid');
+
+            // Validate form fields
             var values = $(".users-update-record-model").serializeArray();
+            var name = values[0].value;
+            var email = values[1].value;
+            var phone = values[2].value;
+            var isValid = true;
+
+            if (name.trim() === '') {
+                $('#update-name').addClass('is-invalid');
+                isValid = false;
+            }
+
+            if (email.trim() === '') {
+                $('#update-email').addClass('is-invalid');
+                isValid = false;
+            }
+
+            if (phone.trim() === '') {
+                $('#update-phone').addClass('is-invalid');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                // If any field is not valid, display a general error message
+                $('#update-errorMessages').text('Please fix the errors in the form.');
+                return;
+            }
+
             var postData = {
-                name: values[0].value,
-                email: values[1].value,
+                name: name,
+                email: email,
+                phone: phone,
             };
 
             var updates = {};

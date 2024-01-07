@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Laravel 10 CRUD Operation using Google Firebase</title>
+    <title>Product</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
@@ -22,8 +22,8 @@
 
 <body>
     <div class="container" style="margin-top: 50px;">
-        <h4 class="text-center">Laravel 10 CRUD Operation using Google Firebase</h4><br>
-        <h5># Add User</h5>
+        <h4 class="text-center">Product</h4><br>
+        <h5># Add Product</h5>
         <div class="card card-default">
             <div class="card-body">
                 <form id="addUser" class="form-inline" method="POST" action="">

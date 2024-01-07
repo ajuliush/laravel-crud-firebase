@@ -8,6 +8,10 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return view('product');
+        return view('pages.product.index');
+    }
+    public function create()
+    {
+        return view('pages.product.create');
     }
 }
